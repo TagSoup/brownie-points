@@ -9,13 +9,13 @@ SchemaOptions =
 ###
   Location comments
 ###
-LocationComments = new Schema
+LocationComment = new Schema
   comment: String
   , schemaOptions
 
-LocationComments.plugin mongooseTypes.useTimestamps #append createdAt and modifiedAt
+LocationComment.plugin mongooseTypes.useTimestamps #append createdAt and modifiedAt
 
-LocationComments.path('comment').set (str) -> #trim to 140 characters
+LocationComment.path('comment').set (str) -> #trim to 140 characters
   str.substr 0,140
 
 ###
@@ -23,6 +23,9 @@ LocationComments.path('comment').set (str) -> #trim to 140 characters
 ###
 LocationImage = new Schema
   path: String
+  active:
+    type: Boolean
+    default: true
   , schemaOptions
 
 LocationImage.plugin mongooseTypes.useTimestamps #append createdAt and modifiedAt
@@ -34,13 +37,12 @@ Location = new Schema
   name: String
   lat: String
   lng: String
-  images: [ ] #collection of LocationImages
-  rating: 
+  images: [ LocationImage ]
+  comments: [ LocationComment ]
+  rating:
     type: Number
     enum: [ 1, 2, 3, 4, 5 ]
   #4sq identifier?
   , schemaOptions
 
 Location.plugin mongooseTypes.useTimestamps #append createdAt and modifiedAt
-
-
