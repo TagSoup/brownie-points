@@ -8,6 +8,8 @@ var express = require('express')
 
 var app = module.exports = express.createServer();
 
+require('coffee-script');
+
 // Configuration
 
 app.configure(function(){
@@ -29,7 +31,9 @@ app.configure('production', function(){
 });
 
 // Routes
-app.get('/', routes.index);
+// app.get('/', routes.index);
+
+require('./routes/routes')(app);
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
