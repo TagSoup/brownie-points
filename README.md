@@ -18,6 +18,7 @@ Brainstorm
 Bathroom data:
 ---
 
+- 4Square Location ID (if possible)
 - Lat
 - Long
 - Image
