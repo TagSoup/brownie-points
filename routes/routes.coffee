@@ -17,7 +17,7 @@ routes = (app) ->
     lat = '33.497'
     lng = '-111.927'
     options = 
-      intent: 'match'
+      intent: 'checkin'
       query: req.params.query
     foursq.Venues.search lat, lng, options, '', (err, results) ->
       console.log 'calling something'
