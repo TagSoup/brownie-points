@@ -2,10 +2,12 @@ Brownie Points
 ==============
 
 To install
+
 - run `npm install`
-- run `node-dev server.js`
+- run `node-dev server.coffee` or `supervisor server.coffee`
 
 Stack
+
 - Node.js
 - Express framework
 - Mongoose ORM
@@ -13,6 +15,7 @@ Stack
 
 Brainstorming Ideas
 ---
+
 Brainstorm
 
 Bathroom data:
