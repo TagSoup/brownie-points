@@ -11,6 +11,7 @@
     "request": "~2.9.202",
     "mongoose-types": "git://github.com/w33ble/mongoose-types.git#bson-patch",
     "coffee-script": "~1.3.1",
-    "node-foursquare": "~0.1.3"
+    "node-foursquare": "~0.1.3",
+    "express-namespace": "~0.1.0"
   }
 }

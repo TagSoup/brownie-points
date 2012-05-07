@@ -11,6 +11,9 @@ SchemaOptions =
 ###
 LocationComment = new Schema
   comment: String
+  active:
+    type: Boolean
+    default: true
   , schemaOptions
 
 LocationComment.plugin mongooseTypes.useTimestamps #append createdAt and modifiedAt
@@ -34,14 +37,22 @@ LocationImage.plugin mongooseTypes.useTimestamps #append createdAt and modifiedA
   Location info
 ###
 Location = new Schema
-  name: String
-  lat: String
-  lng: String
-  images: [ LocationImage ]
-  comments: [ LocationComment ]
+  foursquareId: Interger
+  name: 
+    type: String
+    required: true
+  lat:
+    type: String
+    required: true
+  lng:
+    type: String
+    required: true
   rating:
     type: Number
     enum: [ 1, 2, 3, 4, 5 ]
+    required: true
+  photos: [ LocationImage ]
+  comments: [ LocationComment ]
   #4sq identifier?
   , schemaOptions
 
