@@ -4,6 +4,7 @@ Brownie Points
 To install
 
 - run `npm install`
+- start mongod
 - run `node-dev server.coffee` or `supervisor server.coffee`
 
 Stack
