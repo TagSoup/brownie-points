@@ -31,7 +31,8 @@ LocationRating = new Schema
 
 LocationRating.plugin mongooseTypes.useTimestamps #append createdAt and modifiedAt
 
-
+#LocationRating.index
+#  'location': '2d'
 
 ###
   Location comments

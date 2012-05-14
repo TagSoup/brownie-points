@@ -13,13 +13,11 @@ module.exports = (app) ->
 					errors: 'You must include your location'
 				, 400
 
-			latlng = req.query.location.split(',')
+			lnglat = req.query.location.split(',')
 			search =
 				location:
-					'$near': latlng
-						#lng: latlng[0]
-						#lat: latlng[1]
-					'$maxDistance': 10
+					'$near': lnglat
+					'$maxDistance': 1 / 69 #within 1 mile
 				
 			if req.query.name
 				search.name = new RegExp(req.query.name+'', 'i')
@@ -99,22 +97,18 @@ module.exports = (app) ->
 				photo: 'path'
 				
 			#instantiate new Location object using passed data
-			latlng = req.body.location.split(',')
-			req.body.location = latlng
-				#lng: latlng[0]
-				#lat: latlng[1]
+			lnglat = req.body.location.split(',')
+			req.body.location = lnglat
 							
 			loc = new Location req.body
 
 			console.dir loc
 
-			latlng = req.body.userLocation.split(',')
+			lnglat = req.body.userLocation.split(',')
 			loc.ratings.push
 				rating: req.body.rating
-				location: latlng
-					#lng: latlng[0]
-					#lat: latlng[1]
-
+				location: lnglat
+					
 			#add comment if one exists
 			if req.body.comment
 				loc.comments.push 
