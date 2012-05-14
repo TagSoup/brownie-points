@@ -3,7 +3,7 @@ mongoose = require 'mongoose'
 mongooseTypes = require 'mongoose-types'
 
 Schema = mongoose.Schema
-schemaOptions = 
+schemaOptions =
   strict: true
 
 ###
@@ -14,12 +14,24 @@ LocationRating = new Schema
     type: Number
     enum: [ 1, 2, 3, 4, 5 ]
     required: true
+  location:
+    type: [ Number, Number ]
+    required: true
+    index: '2d'
+    ###lng:
+      type: Number
+      required: true
+    lat:
+      type: Number
+      required: true###
   active:
     type: Boolean
     default: true
   , schemaOptions
 
 LocationRating.plugin mongooseTypes.useTimestamps #append createdAt and modifiedAt
+
+
 
 ###
   Location comments
@@ -55,20 +67,27 @@ Location = new Schema
   name: 
     type: String
     required: true
-  lat:
-    type: Number
+  location:
+    type: [ Number, Number ]
     required: true
-  lng:
-    type: Number
-    required: true
+    index: '2d'
+    ###lng:
+      type: Number
+      required: true
+    lat:
+      type: Number
+      required: true###
+    
   ratings: [ LocationRating ]
   rating: Number
   foursquareId: String
   address: String
   photos: [ LocationImage ]
   comments: [ LocationComment ]
-  #4sq identifier?
   , schemaOptions
+
+#Location.index #allow geospatial queries
+#  location: '2d'
 
 Location.pre 'save', (next) ->
   #every time we save, update the rating
@@ -76,7 +95,7 @@ Location.pre 'save', (next) ->
   @ratings.forEach (rate) ->
     sum += rate.rating
   @rating = sum / @ratings.length
-  console.log 'location rating', @rating
+
   next()
 
 Location.plugin mongooseTypes.useTimestamps #append createdAt and modifiedAt

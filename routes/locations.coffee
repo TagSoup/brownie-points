@@ -7,26 +7,35 @@ module.exports = (app) ->
 
 	app.namespace '/locations', ->
 
-		app.get '/rating/:rating', (req, res, next) ->
-			console.log 'rating: '+req.params.rating
-			#return locations nearby matching >= rating
-			if (req.params.rating not in [ 1, 2, 3, 4, 5])
-				# not a rating, pass to :query:w
-				next()
-
-		app.get '/name/:query', (req, res, next) ->
-			console.dir 'query: '+req.params.query
-			# search 4sq
-			# req.params.lat/lng
-			next() #no match, show all nearby
-
 		app.get '/', (req, res, next) ->
-			console.log '/'
-			res.send 404
-			# pull 4sq
-			# req.params.lat
-			# res.params.lng
+			if not req.query.location
+				res.send 
+					errors: 'You must include your location'
+				, 400
 
+			latlng = req.query.location.split(',')
+			search =
+				location:
+					'$near': latlng
+						#lng: latlng[0]
+						#lat: latlng[1]
+					'$maxDistance': 10
+				
+			if req.query.name
+				search.name = new RegExp(req.query.name+'', 'i')
+
+			if req.query.rating
+				search.rating = $gte: req.query.rating
+
+			console.log search
+			Location.find search, (err, locs) ->
+				if err
+					console.trace err
+					res.send 500
+				else
+					res.send locs
+
+			
 		app.get '/:id', (req, res, next) ->
 			Location.findOne _id: req.params.id, (err, loc) ->
 				if err
@@ -35,11 +44,7 @@ module.exports = (app) ->
 				else if not loc
 					res.send 404
 				else
-					obj = loc
-					#obj['rating'] = loc.rating
-					#obj['test'] = 'this is just a test'
-					console.dir obj
-					res.send obj
+					res.send loc
 
 			#location findOneId _id: xxx
 
@@ -94,10 +99,21 @@ module.exports = (app) ->
 				photo: 'path'
 				
 			#instantiate new Location object using passed data
+			latlng = req.body.location.split(',')
+			req.body.location = latlng
+				#lng: latlng[0]
+				#lat: latlng[1]
+							
 			loc = new Location req.body
 
+			console.dir loc
+
+			latlng = req.body.userLocation.split(',')
 			loc.ratings.push
 				rating: req.body.rating
+				location: latlng
+					#lng: latlng[0]
+					#lat: latlng[1]
 
 			#add comment if one exists
 			if req.body.comment
@@ -109,8 +125,11 @@ module.exports = (app) ->
 				loc.photos.push 
 					path: req.body.photo
 
+			#save new location
+			#TODO: check for and prevent duplicates
 			loc.save (err) ->
 				if err
+					console.trace err
 					res.send
 						errors: middleware.errorHelper err, next
 					, 400

@@ -1,5 +1,5 @@
 exports.errorHelper = (err) ->
-	console.dir err
+	console.trace err
 	if err.name is not 'ValidationError'
 		return err
 
@@ -11,7 +11,6 @@ exports.errorHelper = (err) ->
 
 	errors = []
 
-	console.log 'looping errors'
 	Object.keys(err.errors).forEach (field) ->
 		eObj = err.errors[field]
 
