@@ -8,30 +8,32 @@ module.exports = (app) ->
 	app.namespace '/locations', ->
 
 		app.get '/', (req, res, next) ->
-			if not req.query.location
+			console.log 'wat'
+			if not req.query.location #if you don't weigh in, you don't wrassle
 				res.send 
 					errors: 'You must include your location'
 				, 400
 
-			lnglat = req.query.location.split(',')
-			search =
-				location:
-					'$near': lnglat
-					'$maxDistance': 1 / 69 #within 1 mile
-				
-			if req.query.name
-				search.name = new RegExp(req.query.name+'', 'i')
+			else #location is passed
+				lnglat = req.query.location.split(',')
+				search =
+					location:
+						'$near': lnglat
+						'$maxDistance': 1 / 69 #within 1 mile
+					
+				if req.query.name
+					search.name = new RegExp(req.query.name+'', 'i')
 
-			if req.query.rating
-				search.rating = $gte: req.query.rating
+				if req.query.rating
+					search.rating = $gte: req.query.rating
 
-			console.log search
-			Location.find search, (err, locs) ->
-				if err
-					console.trace err
-					res.send 500
-				else
-					res.send locs
+				console.log search
+				Location.find search, (err, locs) ->
+					if err
+						console.trace err
+						res.send 500
+					else
+						res.send locs
 
 			
 		app.get '/:id', (req, res, next) ->
@@ -49,13 +51,14 @@ module.exports = (app) ->
 		app.post '/:id', (req, res, next) ->
 			Location.findOne _id: req.params.id, (err, loc) ->
 				if err
-					console.log err
+					console.trace err
 					res.send 500
 				else if not loc
 					res.send 404
 				else
 					loc.ratings.push
 						rating: req.body.rating
+						location: req.body.location.split(',')
 
 					#add comment if one exists
 					if req.body.comment
