@@ -11,7 +11,7 @@ schemaOptions =
 ###
 LocationRating = new Schema
   rating:
-    type: Number
+    type: String
     enum: [ 1, 2, 3, 4, 5 ]
     required: true
   location:
@@ -94,7 +94,7 @@ Location.pre 'save', (next) ->
   #every time we save, update the rating
   sum = 0
   @ratings.forEach (rate) ->
-    sum += rate.rating
+    sum += parseInt rate.rating
   @rating = sum / @ratings.length
 
   next()
