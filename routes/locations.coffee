@@ -46,7 +46,7 @@ module.exports = (app) ->
 
 			#location findOneId _id: xxx
 
-		app.post '/:id', (req, res, next) ->
+		app.put '/:id', (req, res, next) ->
 			Location.findOne _id: req.params.id, (err, loc) ->
 				if err
 					console.log err
@@ -78,7 +78,7 @@ module.exports = (app) ->
 								path: '/locations/'+loc._id
 
 
-		app.put '/', (req, res, next) ->
+		app.post '/', (req, res, next) ->
 			# require name, location: lat: x, lng: y
 			# optionally 4sq
 			# EXAMPLE
@@ -97,38 +97,41 @@ module.exports = (app) ->
 				photo: 'path'
 				
 			#instantiate new Location object using passed data
-			lnglat = req.body.location.split(',')
-			req.body.location = lnglat
-							
-			loc = new Location req.body
+			if not req.body.location or not req.body.userLocation
+				res.send "You must include the coords of the location and userLocation", 400
+			else
+				lnglat = req.body.location.split(',')
+				req.body.location = lnglat
+								
+				loc = new Location req.body
 
-			console.dir loc
+				console.dir loc
 
-			lnglat = req.body.userLocation.split(',')
-			loc.ratings.push
-				rating: req.body.rating
-				location: lnglat
-					
-			#add comment if one exists
-			if req.body.comment
-				loc.comments.push 
-					comment: req.body.comment
+				lnglat = req.body.userLocation.split(',')
+				loc.ratings.push
+					rating: req.body.rating
+					location: lnglat
+						
+				#add comment if one exists
+				if req.body.comment
+					loc.comments.push 
+						comment: req.body.comment
 
-			#add image if one is passed
-			if req.body.photo
-				loc.photos.push 
-					path: req.body.photo
+				#add image if one is passed
+				if req.body.photo
+					loc.photos.push 
+						path: req.body.photo
 
-			#save new location
-			#TODO: check for and prevent duplicates
-			loc.save (err) ->
-				if err
-					console.trace err
-					res.send
-						errors: middleware.errorHelper err, next
-					, 400
-					
-				else
-					res.send 
-						location: loc
-						path: '/locations/'+loc.id
+				#save new location
+				#TODO: check for and prevent duplicates
+				loc.save (err) ->
+					if err
+						console.trace err
+						res.send
+							errors: middleware.errorHelper err, next
+						, 400
+						
+					else
+						res.send 
+							location: loc
+							path: '/locations/'+loc.id
